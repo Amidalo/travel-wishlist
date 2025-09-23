@@ -1,11 +1,8 @@
-package wild.yellow.travelwishlistbackend.entities;
+package wild.yellow.travelwishlistbackend.store.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import wild.yellow.travelwishlistbackend.DestinationStatus;
+import lombok.*;
+import wild.yellow.travelwishlistbackend.enums.DestinationStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +11,10 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "destination")
 public class DestinationEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,14 +26,17 @@ public class DestinationEntity {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private DestinationStatus status;
+    private DestinationStatus status = DestinationStatus.PLANNED;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @JoinColumn(name = "consumer_id", nullable = false)
+    private ConsumerEntity consumer;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at",
+            insertable = false,
+            updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
