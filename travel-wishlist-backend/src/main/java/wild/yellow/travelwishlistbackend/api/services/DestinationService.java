@@ -2,28 +2,28 @@ package wild.yellow.travelwishlistbackend.api.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wild.yellow.travelwishlistbackend.api.dtos.requests.DestinationRequest;
 import wild.yellow.travelwishlistbackend.api.dtos.responses.DestinationDto;
 import wild.yellow.travelwishlistbackend.api.factories.DestinationDtoFactory;
 import wild.yellow.travelwishlistbackend.enums.DestinationStatus;
+import wild.yellow.travelwishlistbackend.store.entities.ConsumerEntity;
 import wild.yellow.travelwishlistbackend.store.entities.DestinationEntity;
+import wild.yellow.travelwishlistbackend.store.repositories.ConsumerRepository;
 import wild.yellow.travelwishlistbackend.store.repositories.DestinationRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class DestinationService {
 
     private final DestinationRepository destinationRepository;
     private final DestinationDtoFactory destinationDtoFactory;
-
-    @Autowired
-    public DestinationService(DestinationRepository destinationRepository) {
-        this.destinationRepository = destinationRepository;
-        this.destinationDtoFactory = new DestinationDtoFactory();
-    }
+    private final ConsumerRepository consumerRepository;
 
     public List<DestinationDto> getDestinations() {
         List<DestinationEntity> destinations = destinationRepository.findAll();
@@ -41,9 +41,17 @@ public class DestinationService {
     }
 
     public DestinationDto createDestination(@Valid DestinationRequest destinationToCreate) {
+        ConsumerEntity consumer = consumerRepository.findById(destinationToCreate.getConsumerId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Consumer not found with id: " + destinationToCreate.getConsumerId()
+                ));
+
         var destinationEntity = DestinationEntity.builder()
                 .name(destinationToCreate.getName())
                 .description(destinationToCreate.getDescription())
+                .status(DestinationStatus.PLANNED)
+                .consumer(consumer)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         var destinationToSave = destinationRepository.save(destinationEntity);

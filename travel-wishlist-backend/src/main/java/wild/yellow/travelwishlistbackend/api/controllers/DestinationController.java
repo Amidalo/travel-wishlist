@@ -38,11 +38,21 @@ public class DestinationController {
                 .body(destinationService.getDestinationById(id));
     }
 
-    @PostMapping
+    @PostMapping(consumes = "application/json")
     public ResponseEntity<DestinationDto> createDestination(
             @RequestBody @Valid DestinationRequest destinationToCreate
     ) {
         logger.info("The createDestination method is called");
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(destinationService.createDestination(destinationToCreate));
+    }
+
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<DestinationDto> createDestinationFormData(
+            @ModelAttribute @Valid DestinationRequest destinationToCreate
+    ) {
+        logger.info("The createDestinationFormData method is called");
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(destinationService.createDestination(destinationToCreate));

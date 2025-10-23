@@ -14,4 +14,7 @@ public class DestinationRequest {
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
+    @NotNull(message = "Consumer ID cannot be empty")
+    private Long consumerId;
+
 }

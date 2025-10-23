@@ -25,4 +25,7 @@ public class DestinationDto {
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
+
+    @JsonProperty("consumer")
+    private ConsumerDto consumer;
 }

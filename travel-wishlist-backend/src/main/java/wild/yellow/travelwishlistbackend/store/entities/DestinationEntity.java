@@ -35,7 +35,7 @@ public class DestinationEntity {
     private ConsumerEntity consumer;
 
     @Column(name = "created_at",
-            insertable = false,
+            nullable = false,
             updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
